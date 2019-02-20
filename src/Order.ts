@@ -7,25 +7,44 @@ enum OrderType {
     Attack = "attack"
 }
 
-enum OrderStatus {
+export enum OrderStatus {
     UNPREPARED,
     READY,
     EXCECUTED,
-    EXPIRED
+    EXPIRED,
+    ERROR
 }
 
 export class Order {
+    private static count: number = 0;
+    readonly id: number;
 
     source: Village = new Village(0, { x: 0, y: 0 });
     target: Village = new Village(0, { x: 0, y: 0 });
     units: IUnits = {};
     type: OrderType = OrderType.Attack;
     building: string =  "farm";
-    private _status: OrderStatus = OrderStatus.UNPREPARED;
+    private __status: OrderStatus = OrderStatus.UNPREPARED;
     private _ch: string = "";
 
+    constructor() {
+        this.id = Order.count;
+        Order.count++;
+    }
+
+    private _onStatusChange(this: void, id: number): void {}
+
+    set onStatusChange(callback: (this: void, id: number) => void) {
+        this._onStatusChange = callback;
+    }
+
+    private set _status(status: OrderStatus) {
+        this.__status = status;
+        this.onStatusChange(this.id);
+    }
+
     get status() {
-        return this._status;
+        return this.__status;
     }
 
     static fromUrlenCoded(url: string, type?: OrderType): Order {
@@ -122,7 +141,6 @@ export class OrderBuilder implements IOrderBuilder {
 
     with(units: IUnits): IOrderBuilder {
         this.order.units = { ...Unitdefaults, ...units };
-        this.order.units = this.order.units;
         return this;
     }
 
