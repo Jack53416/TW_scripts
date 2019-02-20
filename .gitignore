@@ -1,3 +1,9 @@
+#Visual studio files
+.vs
+
+#build files
+build/
+
 # Logs
 logs
 *.log

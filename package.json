@@ -1,0 +1,22 @@
+{
+  "name": "tw_scripts",
+  "version": "1.0.0",
+  "description": "Collection of tools for tribal wars game",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc -p .",
+    "fix": "gts fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run check"
+  },
+  "author": "Jacek Byczkiewicz",
+  "license": "ISC",
+  "devDependencies": {
+    "gts": "^0.9.0",
+    "typescript": "~3.1.0"
+  }
+}
