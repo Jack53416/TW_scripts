@@ -18,6 +18,7 @@ export enum OrderStatus {
 export class Order {
     private static count: number = 0;
     readonly id: number;
+    private _error: Error | null = null;
 
     source: Village = new Village(0, { x: 0, y: 0 });
     target: Village = new Village(0, { x: 0, y: 0 });
@@ -40,11 +41,15 @@ export class Order {
 
     private set _status(status: OrderStatus) {
         this.__status = status;
-        this.onStatusChange(this.id);
+        this._onStatusChange(this.id);
     }
 
     get status() {
         return this.__status;
+    }
+
+    get error() {
+        return this._error;
     }
 
     static fromUrlenCoded(url: string, type?: OrderType): Order {
@@ -97,28 +102,45 @@ export class Order {
         return `${WorldConfig.baseUrl}?${ajaxName}=${ajaxVal}&client_time=${Math.trunc(Date.now() / 1000)}&h=${WorldConfig.csrf}&screen=place&village=${this.source.id}`;
     }
 
-    async prepare(): Promise<boolean> {
-        let responseText: string = await Utils.makeRequest(this.url, this.source.id, Utils.RequestType.POST, this.ulrSerialized); // what if there is an error in http request ?
+    async _prepare(): Promise<void> {
+        let responseText: string = await Utils.makeRequest(this.url, this.source.id, Utils.RequestType.POST, this.ulrSerialized);
         let re = /name=\\"ch\\" value=\\"([a-zA-Z0-9:]+)\\"/;
         let match = re.exec(responseText);
 
-        return new Promise<boolean>((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             if (!match)
-                return reject(false);
+                return reject(new Error("Could not find ch value !"));
             this._ch = match[1];
             this._status = OrderStatus.READY;
-            resolve(true);
+            resolve();
         });
     }
 
-    async excecute(): Promise<string> {
+    async prepare() {
+        try {
+            await this._prepare();
+        } catch (e) {
+            this._status = OrderStatus.ERROR;
+            this._error = e;
+        }
+    }
+
+    async _excecute(): Promise<string> {
         let responseText: string = await Utils.makeRequest(this.url, this.source.id, Utils.RequestType.POST, this.ulrSerialized);
 
         return new Promise<string>(resolve => {
             this._status = OrderStatus.EXCECUTED;
             resolve(responseText);
         });
+    }
 
+    async excecute() {
+        try {
+            await this._excecute();
+        } catch(e) {
+            this._status = OrderStatus.ERROR;
+            this._error = e;
+        }
     }
 }
 

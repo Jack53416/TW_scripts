@@ -1,7 +1,7 @@
 import { Order, OrderStatus } from "./Order";
 import { Utils } from "./utils";
 
-abstract class OrderScheduler {
+export abstract class OrderScheduler {
     protected scheduled: Array<Order> = [];
     protected completed: Array<Order> = [];
     protected failed: Array<Order> = [];
@@ -10,35 +10,45 @@ abstract class OrderScheduler {
         order.onStatusChange = (id) => {
             let idx = this.scheduled.findIndex((or) => or.id == id);
             if (idx >= 0) {
-                let completedOrder = <Order>this.scheduled.splice(idx, 1).pop();
-                if (completedOrder.status == OrderStatus.EXCECUTED)
+                let completedOrder = <Order>this.scheduled[idx];
+                if (completedOrder.status == OrderStatus.EXCECUTED) {
                     this.completed.push(completedOrder);
-                else if (completedOrder.status == OrderStatus.ERROR)
+                }
+
+                else if (completedOrder.status == OrderStatus.ERROR) {
                     this.failed.push(completedOrder);
+                }
+                   
             }
         };
         this.scheduled.push(order);
     }
 }
 
-class BatchOrderScheduler extends OrderScheduler {
-    readonly workInterval: number = 140;
+export class BatchOrderScheduler extends OrderScheduler {
+    readonly workInterval: number = 140; //ms
 
     constructor() {
         super();
     }
 
-    private async prepare(): Promise<boolean[]> {
+    private async prepare() {
         let promises = [];
         for (let [idx, order] of this.scheduled.entries()) {
             promises.push(order.prepare());
             console.log(`Preparing order ${idx} of ${this.scheduled.length}`);
             await Utils.wait(this.workInterval);
         }
-        return Promise.all(promises);
+
+        // Some other approach instead of callback
+        const results = await Promise.all(promises.map(p => p.catch(e => e)));
+        const errResults = results.filter((res) => res instanceof Error);
+        if (errResults.length > 0) {
+           // this.failed.push(...errResults)
+        }
     }
 
-    private async excecute(): Promise<string[]> {
+    private async excecute() {
         let promises = [];
         for (let [idx, order] of this.scheduled.entries()) {
             promises.push(order.excecute());
@@ -50,6 +60,7 @@ class BatchOrderScheduler extends OrderScheduler {
 
     async run() {
         await this.prepare();
+        this.scheduled = this.scheduled.filter((el) => el.status == OrderStatus.READY);
         await this.excecute();
     }
 
