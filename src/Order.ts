@@ -15,8 +15,15 @@ export enum OrderStatus {
     ERROR
 }
 
+export interface SecretToken {
+    name: string;
+    value: string;
+}
+
 export class Order {
     private static count: number = 0;
+    static sToken: SecretToken = { name: "37b2629a3410b85aa834b7", value: "60735c2637b262" };
+
     readonly id: number;
     private _error: Error | null = null;
 
@@ -81,7 +88,7 @@ export class Order {
     get ulrSerialized(): string {
         let queryString = new URLSearchParams();
         if (this.status == OrderStatus.UNPREPARED)
-            queryString.append("37b2629a3410b85aa834b7", "60735c2637b262");
+            queryString.append(Order.sToken.name, Order.sToken.value);
         
 
         if (this.status == OrderStatus.READY)
@@ -141,6 +148,23 @@ export class Order {
             this._status = OrderStatus.ERROR;
             this._error = e;
         }
+    }
+
+    async fetchToken(): Promise<SecretToken> {
+        let url = `${WorldConfig.baseUrl}?ajax=command&client_time=${Math.trunc(Date.now() / 1000)}&screen=place&village=${this.source.id}&target=${this.target.id}`;
+        let re = /<input type="hidden" name="([0-9a-z]+)" value="([0-9a-z]+)"/;
+        let response = JSON.parse(await Utils.makeRequest(url, this.source.id, Utils.RequestType.GET));
+        let match = re.exec(response.response.dialog);
+
+        return new Promise<SecretToken>((resolve, reject) => {
+            if (!match)
+                return reject(new Error("Could not find secret token !"));
+            let token: SecretToken = { name: match[1], value: match[2] };
+            Order.sToken = token;
+            resolve(token);
+        });
+
+
     }
 }
 
