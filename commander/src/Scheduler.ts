@@ -6,12 +6,12 @@ export abstract class OrderScheduler {
     protected completed: Array<Order> = [];
     protected failed: Array<Order> = [];
 
-    protected _onProgress(this: void, value: number): void { };
+    protected _onProgress<T>(this: void, value: T): void { };
 
     abstract get taskCost(): number;
     abstract get progress(): number;
 
-    set onProgress(callback: (this: void, value: number) => void) {
+    set onProgress(callback: <T>(this: void, value: T) => void) {
         this._onProgress = callback;
     }
 
