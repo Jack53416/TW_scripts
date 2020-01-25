@@ -3,12 +3,12 @@ const path = require('path');
 const webpack = require('webpack');
 
 const METADATA = `  // ==UserScript==
-// @name         New Userscript
+// @name         CoinMinter
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  try to take over the world!
-// @author       You
-// @match        http://127.0.0.1:8081/*
+// @description  Mints coins
+// @author       Cruel
+// @match        https://*.plemiona.pl/game.php*
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        unsafeWindow
