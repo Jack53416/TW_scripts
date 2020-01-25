@@ -13,6 +13,10 @@ export class Globals {
     static sleep(milis) {
         return new Promise((resolve) => setTimeout(resolve, milis));
     }
+    
+    static get resourceNames() {
+        return ['wood', 'stone', 'iron'];
+    }
 }
 
 
