@@ -3,11 +3,12 @@ import { Worker } from '../worker';
 export class Builder extends Worker {
     constructor(builderPage, villageNameSelector) {
         super(builderPage);
-        this.nameInput = document.querySelector(villageNameSelector);
+        this.nameInputSelector = villageNameSelector;
     }
     
     run() {
         this.validatePage();
-        this.nameInput.value = 'auto';
+        const nameInput = document.querySelector(this.nameInputSelector);
+        nameInput.value = 'auto';
     }
 }
