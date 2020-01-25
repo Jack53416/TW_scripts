@@ -9,6 +9,7 @@ export class Job {
         this.timeSpan = timeSpan;
         this.nextExecution = this.calcNextExecution();
         this.previousExecution = null;
+        this.isChangingLocation = false;
     }
 
     calcNextExecution() {
@@ -59,13 +60,14 @@ export class Scheduler {
             job.previousExecution = job.nextExecution;
             job.nextExecution = job.calcNextExecution();
             await this.save();
-            job.worker.run();
+            this.isChangingLocation = job.worker.run();
         } catch (ex) {
             if (ex instanceof LocationError) {
                 job.nextExecution = job.previousExecution;
                 await this.save();
+                this.isChangingLocation = true;
                 location = job.worker.location;
-                return;
+                
             }
             else if (ex instanceof WorkerError) {
                 console.info(`Skipping execution due to worker error: ${ex}`);
@@ -76,7 +78,8 @@ export class Scheduler {
         }
         finally {
             console.log(`Executed ${job.name} prev: ${job.previousExecution} next: ${job.nextExecution}`);
-            this.run();
+            if(!this.isChangingLocation)
+                this.run();
         }
     }
 

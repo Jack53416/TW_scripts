@@ -22,5 +22,6 @@ export class Caller extends Worker {
         this.validatePage();
         this.clickButton(this.toggleAllSelector, 'toggleAllVillages');
         this.clickButton(this.submitSelector, 'submitForm');
+        return false;
     }
 }

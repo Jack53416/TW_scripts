@@ -42,5 +42,6 @@ export class Minter extends Worker {
         this.validatePage();
         this.selectAllCoins();
         this.mintCoins();
+        return true;
     }
 }

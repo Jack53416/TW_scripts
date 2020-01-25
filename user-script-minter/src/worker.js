@@ -72,7 +72,12 @@ export class Worker {
             throw new LocationError('Invalid Page');
         }
     }
-
+    /**
+     * Execution entry for a job. Should return boolean flag which states if 
+     * execution is expected to refresh the page.
+     * @return {boolean} true if successfull worker execution refreshes the page,
+     *                   false otherwise. 
+     */
     run() {
         throw new Error('Method \'run\' not implemented');
     }
