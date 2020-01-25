@@ -1,4 +1,5 @@
-import { Worker } from '../worker';
+import {Worker} from '../worker';
+import {WorkerError} from '../exception';
 
 export class Caller extends Worker {
     constructor(marketPage, 
@@ -9,20 +10,18 @@ export class Caller extends Worker {
         this.submitSelector = submitSelector;
     }
     
-    selectAllVillages() {
-        const button = document.querySelector(this.toggleAllSelector);
+    clickButton(selector, name) {
+        const button = document.querySelector(selector);
+        if(!button) {
+            throw new WorkerError(`${name} button could not be found!`);
+        }
         button.click();
-    }
-    
-    submitForm() {
-        const button = document.querySelector(this.submitSelector);
-        button.click();
-    }
+    } 
     
     run() {
         this.validatePage();
-        this.selectAllVillages();
-        this.submitForm();
+        this.clickButton(this.toggleAllSelector, 'toggleAllVillages');
+        this.clickButton(this.submitSelector, 'submitForm');
         location.reload();
     }
 }

@@ -1,6 +1,6 @@
 import {Worker} from '../worker';
 import {Globals} from '../globals';
-import {LocationError} from '../exception';
+import {LocationError, WorkerError} from '../exception';
 
 export class Minter extends Worker {
     /**
@@ -15,9 +15,12 @@ export class Minter extends Worker {
     
     mintCoins() {
         const mintButton = document.querySelector(this.mintSelector);
-        if (!mintButton && !this.areResourcesValid) {
-            // reload when button cannot automatically recover. Does not miss execution
-            throw new LocationError('Snoob page needs to be refreshed'); 
+        if (!mintButton) {
+            if (!this.areResourcesValid) {
+                // reload when button cannot automatically recover. Does not miss execution
+                throw new LocationError('Snoob page needs to be refreshed');
+            }
+            throw new WorkerError('Mint button not found');
         }
         mintButton.click();
     }
