@@ -1,6 +1,7 @@
 import * as db from 'idb-keyval';
 import * as daysjs from 'dayjs';
 import {LocationError, WorkerError} from './exception';
+import {Globals} from './globals';
 
 export class Job {
     constructor(name, worker, timeSpan) {
@@ -78,8 +79,11 @@ export class Scheduler {
         }
         finally {
             console.log(`Executed ${job.name} prev: ${job.previousExecution} next: ${job.nextExecution}`);
-            if(!this.isChangingLocation)
+            if(!this.isChangingLocation) {
+                await Globals.sleep(Globals.TIMEOUT);
                 this.run();
+            }
+                
         }
     }
 
