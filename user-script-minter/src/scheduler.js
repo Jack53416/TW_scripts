@@ -9,7 +9,6 @@ export class Job {
         this.timeSpan = timeSpan;
         this.nextExecution = this.calcNextExecution();
         this.previousExecution = null;
-        this.isChangingLocation = false;
     }
 
     calcNextExecution() {
@@ -25,6 +24,7 @@ export class Scheduler {
     constructor() {
         this.jobs = {};
         this.executors = [];
+        this.isChangingLocation = false;
     }
 
     async addWorker(name, worker, timeSpan) {
