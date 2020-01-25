@@ -9,3 +9,15 @@ export class LocationError extends Error {
         this.name = 'LocationError';
     }
 }
+
+export class WorkerError extends Error {
+    constructor(...params) {
+        super(params);
+        
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, WorkerError);
+        }
+        
+        this.name = 'WorkerError';
+    }
+}

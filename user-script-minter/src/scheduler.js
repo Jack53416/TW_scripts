@@ -1,6 +1,6 @@
 import * as db from 'idb-keyval';
 import * as daysjs from 'dayjs';
-import {LocationError} from './exception';
+import {LocationError, WorkerError} from './exception';
 import {Globals} from './globals';
 
 export class Job {
@@ -68,7 +68,13 @@ export class Scheduler {
                 location = job.worker.location;
                 return;
             }
-            console.error(`Failed ${job.name} execution, ex: ${ex}`);
+            else if (ex instanceof WorkerError) {
+                console.info(`Skipping execution due to worker error: ${ex}`);
+            }
+            else {
+                console.error(`Failed ${job.name} execution, ex: ${ex}`);
+            }
+            
             this.run();
         }
         finally {
