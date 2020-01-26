@@ -1,6 +1,6 @@
 import {Scheduler} from './scheduler';
-import {Minter} from './minter';
-import {Caller} from './caller';
+import {Minter} from './workers/minter';
+import {Caller} from './workers/caller';
 import {Pages} from './worker';
 
 async function main() {

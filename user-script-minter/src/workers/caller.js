@@ -1,4 +1,4 @@
-import { Worker } from './worker';
+import { Worker } from '../worker';
 
 export class Caller extends Worker {
     constructor(marketPage) {
