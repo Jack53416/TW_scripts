@@ -7,8 +7,6 @@ async function main() {
     const scheduler = new Scheduler();
     const minter = new Minter(
         Pages.MINT,
-        'button',
-        'button',
     );
     
     const caller = new Caller(
@@ -18,6 +16,7 @@ async function main() {
     await scheduler.load();
     scheduler.addWorker('minter', minter, 5000);
     scheduler.addWorker('caller', caller, 16000);
+    
     scheduler.run();
 }
 
