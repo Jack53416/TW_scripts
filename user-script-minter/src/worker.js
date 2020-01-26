@@ -1,22 +1,33 @@
-import { Globals } from './globals';
-import {LocationError} from './exception';
+import {
+    Globals
+} from './globals';
+import {
+    LocationError
+} from './exception';
 
 export const Pages = Object.freeze({
     CALL_RESOURCES: {
         screen: 'market',
         mode: 'call',
+        params: {
+            group: 0,
+            page: -1,
+        }
     },
     MINT: {
-        screen: 'noble',
+        screen: 'snob',
         mode: null,
+        params: {},
     },
     RECRUIT: {
-        screen: 'baracks',
+        screen: 'barracks',
         mode: 'train',
+        params: {},
     },
     BUILD: {
         screen: 'main',
         mode: null,
+        params: {},
     }
 });
 
@@ -35,27 +46,33 @@ export class Worker {
         this.page = page;
         this.gameData = gameData;
     }
-    
+
     get location() {
-        // return `${this.gameData.link_base_pure}${this.page.screen}&mode=${this.page.mode}`;
-        return `${this.gameData.link_base_pure}${this.page.screen}.html`;
+        let result = `${this.gameData.link_base_pure}${this.page.screen}`;
+        if (this.page.mode) {
+            result += `&mode=${this.page.mode}`;
+        }
+        const params = Object.keys(this.page.params)
+            .map(key => `${key}=${this.page.params[key]}`).join('&');
+        result += `&${params}`;
+        return result;
     }
-    
+
     get isCaptchaPresent() {
         return false;
     }
-    
+
     get pageValid() {
-        return this.gameData.screen === this.page.screen && 
-               this.gameData.mode === this.page.mode;
+        return this.gameData.screen === this.page.screen &&
+            this.gameData.mode === this.page.mode;
     }
-    
+
     validatePage() {
-        if(!this.pageValid) {
+        if (!this.pageValid) {
             throw new LocationError('Invalid Page');
         }
     }
-    
+
     run() {
         throw new Error('Method \'run\' not implemented');
     }
