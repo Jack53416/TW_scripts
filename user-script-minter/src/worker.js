@@ -2,13 +2,24 @@ import {
     Globals
 } from './globals';
 
-export const Screens = Object.freeze({
-    MARKET: 'market',
-    MINTER: 'noble',
-});
 
-export const Modes = Object.freeze({
-    CALL: 'call',
+export const Pages = Object.freeze({
+    CALL_RESOURCES: {
+        screen: 'market',
+        mode: 'call',
+    },
+    MINT: {
+        screen: 'noble',
+        mode: null,
+    },
+    RECRUIT: {
+        screen: 'baracks',
+        mode: 'train',
+    },
+    BUILD: {
+        screen: 'main',
+        mode: null,
+    }
 });
 
 export class Worker {

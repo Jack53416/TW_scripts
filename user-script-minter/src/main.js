@@ -1,18 +1,18 @@
 import {Scheduler} from './scheduler';
 import {Minter} from './minter';
 import {Caller} from './caller';
-import {Screens} from './worker';
+import {Pages} from './worker';
 
 async function main() {
     const scheduler = new Scheduler();
     const minter = new Minter(
-        {screen: Screens.MINTER, mode: ''},
+        Pages.MINT,
         'button',
         'button',
     );
     
     const caller = new Caller(
-        {screen: Screens.MARKET, mode: 'call'}
+        Pages.CALL_RESOURCES,
     );
     
     await scheduler.load();
