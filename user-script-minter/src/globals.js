@@ -17,5 +17,5 @@ export class Globals {
 
 
 Globals.TIMEOUT = 2000;
-Globals.RESOURCE_DELAY = 15000;
-Globals.MINT_DELAY = 7000;
+Globals.RESOURCE_DELAY = 15 * 60 * 1000;
+Globals.MINT_DELAY = 10000;
