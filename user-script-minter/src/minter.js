@@ -23,9 +23,7 @@ export class Minter extends Worker {
     }
     
     run() {
-        if(!this.pageValid) {
-            throw new Error('Invalid Page');
-        }
+        this.validatePage();
         this.mintCoins();
         
         //this.selectAllCoins();

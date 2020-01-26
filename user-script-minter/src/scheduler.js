@@ -1,5 +1,6 @@
 import * as db from 'idb-keyval';
 import * as daysjs from 'dayjs';
+import {LocationError} from './exception';
 
 export class Job {
     constructor(name, worker, timeSpan) {
@@ -60,7 +61,8 @@ export class Scheduler {
             await this.save();
             job.worker.run();
         } catch(ex){
-            console.error(`Failed ${job.name} execution, ex: ${ex}`);
+            if(!(ex instanceof LocationError))
+                console.error(`Failed ${job.name} execution, ex: ${ex}`);
             job.nextExecution = job.previousExecution;
             await this.save();
             location = job.worker.location;

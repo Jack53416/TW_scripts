@@ -10,9 +10,7 @@ export class Caller extends Worker {
     }
     
     run() {
-        if(!this.pageValid){
-            throw new Error('Invalid Page');
-        }
+        this.validatePage();
         this.callResources();
     }
 }

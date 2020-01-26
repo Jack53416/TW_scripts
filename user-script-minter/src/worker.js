@@ -1,7 +1,5 @@
-import {
-    Globals
-} from './globals';
-
+import { Globals } from './globals';
+import {LocationError} from './exception';
 
 export const Pages = Object.freeze({
     CALL_RESOURCES: {
@@ -50,6 +48,12 @@ export class Worker {
     get pageValid() {
         return this.gameData.screen === this.page.screen && 
                this.gameData.mode === this.page.mode;
+    }
+    
+    validatePage() {
+        if(!this.pageValid) {
+            throw new LocationError('Invalid Page');
+        }
     }
     
     run() {
