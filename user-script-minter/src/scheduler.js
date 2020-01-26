@@ -69,9 +69,12 @@ export class Scheduler {
                 return;
             }
             console.error(`Failed ${job.name} execution, ex: ${ex}`);
+            this.run();
+        }
+        finally {
+            console.log(`Executed ${job.name} prev: ${job.previousExecution} next: ${job.nextExecution}`);
         }
         await Globals.sleep(Globals.TIMEOUT);
-        location.reload();
     }
 
     run() {
@@ -80,7 +83,7 @@ export class Scheduler {
             .reduce((min, job) => {
                 return job.delay < min.delay ? job : min;
             });
-        console.log(jobToExecute);
+        console.log(`Scheduled ${jobToExecute.name} on: ${jobToExecute.nextExecution}`);
         setTimeout(async (job) => {
             await this.executeJob(job);
         }, jobToExecute.delay, jobToExecute);
