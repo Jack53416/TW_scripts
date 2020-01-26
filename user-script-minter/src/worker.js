@@ -1,7 +1,4 @@
 import {
-    Globals
-} from './globals';
-import {
     LocationError
 } from './exception';
 
@@ -10,7 +7,6 @@ export const Pages = Object.freeze({
         screen: 'market',
         mode: 'call',
         params: {
-            group: 0,
             page: -1,
         }
     },
@@ -42,9 +38,8 @@ export class Worker {
      * @param {string} gameData.mode
      * @param {string} gameData.link_base_pure
      */
-    constructor(page, gameData = Globals.gameData) {
+    constructor(page) {
         this.page = page;
-        this.gameData = gameData;
     }
 
     get location() {
