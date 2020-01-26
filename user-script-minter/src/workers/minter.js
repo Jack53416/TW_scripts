@@ -29,7 +29,7 @@ export class Minter extends Worker {
         const rarestResource = Globals.resourceNames.map(key => {
             return {name: key, value: Globals.gameData.village[key]}; 
         }).reduce((min, resource) => {
-            return resource < min ? resource : min;
+            return resource.value < min.value ? resource : min;
         });
         return Globals.unsafeWindow.BuildingSnob.Modes.train.storage_item[rarestResource.name] > rarestResource.value;
     }
