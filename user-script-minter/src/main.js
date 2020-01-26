@@ -2,6 +2,7 @@ import {Scheduler} from './scheduler';
 import {Minter} from './workers/minter';
 import {Caller} from './workers/caller';
 import {Pages} from './worker';
+import {Globals} from './globals';
 
 async function main() {
     const scheduler = new Scheduler();
@@ -14,8 +15,8 @@ async function main() {
     );
     
     await scheduler.load();
-    scheduler.addWorker('minter', minter, 5000);
-    scheduler.addWorker('caller', caller, 16000);
+    scheduler.addWorker('minter', minter, Globals.MINT_DELAY);
+    scheduler.addWorker('caller', caller, Globals.RESOURCE_DELAY);
     
     scheduler.run();
 }
