@@ -23,5 +23,6 @@ export class Caller extends Worker {
         this.validatePage();
         this.selectAllVillages();
         this.submitForm();
+        location.reload();
     }
 }
