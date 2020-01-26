@@ -1,8 +1,7 @@
 import * as db from 'idb-keyval';
 import * as daysjs from 'dayjs';
-import {
-    LocationError
-} from './exception';
+import {LocationError} from './exception';
+import {Globals} from './globals';
 
 export class Job {
     constructor(name, worker, timeSpan) {
@@ -63,15 +62,16 @@ export class Scheduler {
             await this.save();
             job.worker.run();
         } catch (ex) {
-            if (!(ex instanceof LocationError))
-                console.error(`Failed ${job.name} execution, ex: ${ex}`);
-            job.nextExecution = job.previousExecution;
-            await this.save();
-            location = job.worker.location;
-            return;
+            if (ex instanceof LocationError) {
+                job.nextExecution = job.previousExecution;
+                await this.save();
+                location = job.worker.location;
+                return;
+            }
+            console.error(`Failed ${job.name} execution, ex: ${ex}`);
         }
+        await Globals.sleep(Globals.TIMEOUT);
         location.reload();
-
     }
 
     run() {
