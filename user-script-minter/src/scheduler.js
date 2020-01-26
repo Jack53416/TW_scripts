@@ -1,6 +1,8 @@
 import * as db from 'idb-keyval';
 import * as daysjs from 'dayjs';
-import {LocationError} from './exception';
+import {
+    LocationError
+} from './exception';
 
 export class Job {
     constructor(name, worker, timeSpan) {
@@ -10,7 +12,7 @@ export class Job {
         this.nextExecution = this.calcNextExecution();
         this.previousExecution = null;
     }
-    
+
     calcNextExecution() {
         return daysjs().add(this.timeSpan, 'ms').toDate();
     }
@@ -27,13 +29,13 @@ export class Scheduler {
     }
 
     async addWorker(name, worker, timeSpan) {
-        if(!this.jobs[name])
+        if (!this.jobs[name])
             this.jobs[name] = new Job(name, worker, timeSpan);
         else {
             this.jobs[name].worker = worker;
         }
     }
-    
+
     async save() {
         await db.set('jobs', this.jobs);
     }
@@ -41,7 +43,7 @@ export class Scheduler {
     async load() {
         const storedJobs = await db.get('jobs');
         if (storedJobs) {
-            
+
             Object.keys(storedJobs).map(key => {
                 const model = new Job();
                 return Object.assign(model, storedJobs[key]);
@@ -53,28 +55,35 @@ export class Scheduler {
 
         return false;
     }
-    
+
     async executeJob(job) {
         try {
             job.previousExecution = job.nextExecution;
             job.nextExecution = job.calcNextExecution();
             await this.save();
             job.worker.run();
-        } catch(ex){
-            if(!(ex instanceof LocationError))
+        } catch (ex) {
+            if (!(ex instanceof LocationError))
                 console.error(`Failed ${job.name} execution, ex: ${ex}`);
             job.nextExecution = job.previousExecution;
             await this.save();
             location = job.worker.location;
+            return;
         }
-        
+        location.reload();
+
     }
 
     run() {
-        Object.keys(this.jobs).forEach((key) => {
-            const job = this.jobs[key];
-            console.log(`${job.name}: ${job.delay}`);
-            this.executors.push(setTimeout(async (job) => {await this.executeJob(job);}, job.delay, job));
-        });
+        const jobToExecute = Object.keys(this.jobs)
+            .map(key => this.jobs[key])
+            .reduce((min, job) => {
+                return job.delay < min.delay ? job : min;
+            });
+        console.log(jobToExecute);
+        setTimeout(async (job) => {
+            await this.executeJob(job);
+        }, jobToExecute.delay, jobToExecute);
+
     }
 }
