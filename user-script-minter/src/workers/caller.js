@@ -1,16 +1,27 @@
 import { Worker } from '../worker';
 
 export class Caller extends Worker {
-    constructor(marketPage) {
+    constructor(marketPage, 
+        toggleAllSelector = 'input[name=select-all]',
+        submitSelector = 'form[name=call-resources] > input[type=submit]') {
         super(marketPage);
+        this.toggleAllSelector = toggleAllSelector;
+        this.submitSelector = submitSelector;
     }
     
-    callResources() {
-        console.log('Resource called');
+    selectAllVillages() {
+        const button = document.querySelector(this.toggleAllSelector);
+        button.click();
+    }
+    
+    submitForm() {
+        const button = document.querySelector(this.submitSelector);
+        button.click();
     }
     
     run() {
         this.validatePage();
-        this.callResources();
+        this.selectAllVillages();
+        this.submitForm();
     }
 }
